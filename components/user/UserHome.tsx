@@ -85,7 +85,7 @@ const UserHome: React.FC<{ navigation: any }> = ({ navigation }) => {
 
     return (
         <Container>
-            <MapView
+            {/* <MapView
                 provider={PROVIDER_GOOGLE}
                 style={{ flex: 1 }}
                 initialRegion={{
@@ -103,7 +103,7 @@ const UserHome: React.FC<{ navigation: any }> = ({ navigation }) => {
                     <Icon name="truck" type="material" size={32} color={theme.colors.primary} />
                 </Marker>
             )}
-            </MapView>
+            </MapView> */}
             
             <Header>
                 <AppName>{t('loadify')}</AppName>
@@ -142,7 +142,7 @@ const UserHome: React.FC<{ navigation: any }> = ({ navigation }) => {
 // Panel Components
 const InputPanel: React.FC = () => {
     const {t} = useI18n();
-    const dispatch = useAppAppDispatch();
+    const dispatch = useAppDispatch();
     const { pickup, dropoff, aiPrompt, selectedVehicleId } = useAppSelector(state => state.booking);
     const { account } = useAppSelector(state => state.auth);
     const { isListening, startRecognition } = useVoiceRecognition();

@@ -1,5 +1,11 @@
 // In-memory "database"
-import { DocumentStatus } from '../types/types.ts';
+
+const DocumentStatus = {
+    NOT_UPLOADED: 'doc_not_uploaded',
+    PENDING: 'doc_pending',
+    APPROVED: 'doc_approved',
+    REJECTED: 'doc_rejected',
+}
 
 let users = {
     'user1': {
