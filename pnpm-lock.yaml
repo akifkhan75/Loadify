@@ -114,6 +114,9 @@ importers:
 
   apps/mobile:
     dependencies:
+      '@loadify/api-client':
+        specifier: workspace:^
+        version: link:../../packages/api-client
       '@loadify/types':
         specifier: workspace:^
         version: link:../../packages/types
@@ -241,6 +244,13 @@ importers:
       axios:
         specifier: ^1.6.0
         version: 1.20.0
+    devDependencies:
+      '@loadify/tsconfig':
+        specifier: workspace:*
+        version: link:../tsconfig
+      typescript:
+        specifier: ^5.0.0
+        version: 5.0.4
 
   packages/eslint-config: {}
 
