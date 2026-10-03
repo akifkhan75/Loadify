@@ -1,0 +1,116 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  DRIVER
+  ADMIN
+}
+
+enum ServiceLevel {
+  STANDARD
+  PREMIUM
+  LUXURY
+}
+
+enum RideStatus {
+  PENDING
+  ACCEPTED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+model Account {
+  id        String   @id @default(uuid())
+  mobile    String   @unique
+  password  String
+  role      Role     @default(USER)
+  firstName String?
+  lastName  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userProfile   UserProfile?
+  driverProfile DriverProfile?
+  chatMessages  ChatMessage[]
+}
+
+model UserProfile {
+  id        String   @id @default(uuid())
+  accountId String   @unique
+  account   Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  
+  rideRequests RideRequest[]
+}
+
+model DriverProfile {
+  id          String   @id @default(uuid())
+  accountId   String   @unique
+  account     Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  isOnline    Boolean  @default(false)
+  vehicleType String?
+  
+  driverOffers DriverOffer[]
+  acceptedRides RideRequest[]
+}
+
+model RideRequest {
+  id           String       @id @default(uuid())
+  userId       String
+  user         UserProfile  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vehicleId    String?
+  serviceLevel ServiceLevel @default(STANDARD)
+  pickupTime   DateTime?
+  pickupLat    Float?
+  pickupLng    Float?
+  dropoffLat   Float?
+  dropoffLng   Float?
+  status       RideStatus   @default(PENDING)
+  driverId     String?
+  driver       DriverProfile? @relation(fields: [driverId], references: [id])
+  
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  offers       DriverOffer[]
+  chat         Chat?
+}
+
+model DriverOffer {
+  id            String       @id @default(uuid())
+  rideRequestId String
+  rideRequest   RideRequest  @relation(fields: [rideRequestId], references: [id], onDelete: Cascade)
+  driverId      String
+  driver        DriverProfile @relation(fields: [driverId], references: [id], onDelete: Cascade)
+  status        String       @default("PENDING") // PENDING, ACCEPTED, REJECTED
+  
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+}
+
+model Chat {
+  id            String       @id @default(uuid())
+  rideRequestId String       @unique
+  rideRequest   RideRequest  @relation(fields: [rideRequestId], references: [id], onDelete: Cascade)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  messages      ChatMessage[]
+}
+
+model ChatMessage {
+  id        String   @id @default(uuid())
+  chatId    String
+  chat      Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  senderId  String
+  sender    Account  @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  text      String
+  createdAt DateTime @default(now())
+}
